@@ -11,7 +11,6 @@ import org.apache.hadoop.mapred.Reporter;
 
 public class RankCalculateMapper extends MapReduceBase implements Mapper<LongWritable, Text, Text, Text>{
 
-    @Override
     public void map(LongWritable key, Text value, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
         int pageTabIndex = value.find("\t");
         int rankTabIndex = value.find("\t", pageTabIndex+1);

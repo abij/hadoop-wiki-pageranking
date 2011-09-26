@@ -73,7 +73,6 @@ public class XmlInputFormat extends TextInputFormat {
       fsin.seek(start);
     }
     
-    @Override
     public boolean next(LongWritable key, Text value) throws IOException {
       if (fsin.getPos() < end) {
         if (readUntilMatch(startTag, false)) {
@@ -92,27 +91,22 @@ public class XmlInputFormat extends TextInputFormat {
       return false;
     }
     
-    @Override
     public LongWritable createKey() {
       return new LongWritable();
     }
     
-    @Override
     public Text createValue() {
       return new Text();
     }
     
-    @Override
     public long getPos() throws IOException {
       return fsin.getPos();
     }
     
-    @Override
     public void close() throws IOException {
       fsin.close();
     }
     
-    @Override
     public float getProgress() throws IOException {
       return (fsin.getPos() - start) / (float) (end - start);
     }

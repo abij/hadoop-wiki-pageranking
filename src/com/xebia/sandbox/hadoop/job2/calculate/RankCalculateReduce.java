@@ -13,7 +13,6 @@ public class RankCalculateReduce extends MapReduceBase implements Reducer<Text, 
 
     private static final float damping = 0.85F;
     
-    @Override
     public void reduce(Text page, Iterator<Text> values, OutputCollector<Text, Text> out, Reporter reporter) throws IOException {
         boolean isExistingWikiPage = false;
         String[] split;
