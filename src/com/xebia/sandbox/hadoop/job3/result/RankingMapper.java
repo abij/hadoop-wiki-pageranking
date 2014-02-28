@@ -1,15 +1,16 @@
 package com.xebia.sandbox.hadoop.job3.result;
 
-import java.io.IOException;
-import java.nio.charset.CharacterCodingException;
-
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
+import java.io.IOException;
+import java.nio.charset.CharacterCodingException;
+
 public class RankingMapper extends Mapper<LongWritable, Text, FloatWritable, Text> {
-    
+
+    @Override
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         String[] pageAndRank = getPageAndRank(key, value);
         

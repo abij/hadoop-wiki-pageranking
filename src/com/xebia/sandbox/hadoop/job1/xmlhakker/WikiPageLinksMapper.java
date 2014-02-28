@@ -13,7 +13,8 @@ import java.util.regex.Pattern;
 public class WikiPageLinksMapper extends Mapper<LongWritable, Text, Text, Text> {
     
     private static final Pattern wikiLinksPattern = Pattern.compile("\\[.+?\\]");
-    
+
+    @Override
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         
         // Returns  String[0] = <title>[TITLE]</title>

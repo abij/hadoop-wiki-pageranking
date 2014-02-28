@@ -4,13 +4,13 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 public class RankCalculateReduce extends Reducer<Text, Text, Text, Text> {
 
     private static final float damping = 0.85F;
-    
-    public void reduce(Text page, Iterator<Text> values, Context context) throws IOException, InterruptedException {
+
+    @Override
+    public void reduce(Text page, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         boolean isExistingWikiPage = false;
         String[] split;
         float sumShareOtherPageRanks = 0;
@@ -21,8 +21,8 @@ public class RankCalculateReduce extends Reducer<Text, Text, Text, Text> {
         // - check control characters
         // - calculate pageRank share <rank> / count(<links>)
         // - add the share to sumShareOtherPageRanks
-        while(values.hasNext()){
-            pageWithRank = values.next().toString();
+        for (Text value : values){
+            pageWithRank = value.toString();
             
             if(pageWithRank.equals("!")) {
                 isExistingWikiPage = true;

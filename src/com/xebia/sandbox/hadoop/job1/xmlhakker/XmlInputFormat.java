@@ -112,10 +112,12 @@ public class XmlInputFormat extends TextInputFormat {
             return value;
         }
 
+        @Override
         public void close() throws IOException {
             fsin.close();
         }
 
+        @Override
         public float getProgress() throws IOException {
             return (fsin.getPos() - start) / (float) (end - start);
         }
