@@ -1,31 +1,25 @@
 package com.xebia.sandbox.hadoop.job1.xmlhakker;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.MapReduceBase;
-import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.Reducer;
-import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.mapreduce.Reducer;
+
+import java.io.IOException;
 
 
-public class WikiLinksReducer extends MapReduceBase implements Reducer<Text, Text, Text, Text> {
+public class WikiLinksReducer extends Reducer<Text, Text, Text, Text> {
     
-    public void reduce(Text key, Iterator<Text> values, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
+    public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         String pagerank = "1.0\t";
 
         boolean first = true;
-        while(values.hasNext()){
+
+        for (Text value : values) {
             if(!first) pagerank += ",";
-            
-            pagerank += values.next().toString();
+
+            pagerank += value.toString();
             first = false;
         }
-        
-        output.collect(key, new Text(pagerank));
+
+        context.write(key, new Text(pagerank));
     }
 }

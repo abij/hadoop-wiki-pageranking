@@ -1,17 +1,14 @@
 package com.xebia.sandbox.hadoop.job2.calculate;
 
-import java.io.IOException;
-
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.MapReduceBase;
-import org.apache.hadoop.mapred.Mapper;
-import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.mapreduce.Mapper;
 
-public class RankCalculateMapper extends MapReduceBase implements Mapper<LongWritable, Text, Text, Text>{
+import java.io.IOException;
 
-    public void map(LongWritable key, Text value, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
+public class RankCalculateMapper extends Mapper<LongWritable, Text, Text, Text> {
+
+    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         int pageTabIndex = value.find("\t");
         int rankTabIndex = value.find("\t", pageTabIndex+1);
 
@@ -19,7 +16,7 @@ public class RankCalculateMapper extends MapReduceBase implements Mapper<LongWri
         String pageWithRank = Text.decode(value.getBytes(), 0, rankTabIndex+1);
         
         // Mark page as an Existing page (ignore red wiki-links)
-        output.collect(new Text(page), new Text("!"));
+        context.write(new Text(page), new Text("!"));
 
         // Skip pages with no links.
         if(rankTabIndex == -1) return;
@@ -30,10 +27,10 @@ public class RankCalculateMapper extends MapReduceBase implements Mapper<LongWri
         
         for (String otherPage : allOtherPages){
             Text pageRankTotalLinks = new Text(pageWithRank + totalLinks);
-            output.collect(new Text(otherPage), pageRankTotalLinks);
+            context.write(new Text(otherPage), pageRankTotalLinks);
         }
         
         // Put the original links of the page for the reduce output
-        output.collect(new Text(page), new Text("|"+links));
+        context.write(new Text(page), new Text("|" + links));
     }
 }

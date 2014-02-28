@@ -1,24 +1,20 @@
 package com.xebia.sandbox.hadoop.job1.xmlhakker;
 
-import java.io.IOException;
-import java.nio.charset.CharacterCodingException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.MapReduceBase;
-import org.apache.hadoop.mapred.Mapper;
-import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.mapreduce.Mapper;
+
+import java.io.IOException;
+import java.nio.charset.CharacterCodingException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
-public class WikiPageLinksMapper extends MapReduceBase implements Mapper<LongWritable, Text, Text, Text> {
+public class WikiPageLinksMapper extends Mapper<LongWritable, Text, Text, Text> {
     
     private static final Pattern wikiLinksPattern = Pattern.compile("\\[.+?\\]");
     
-    public void map(LongWritable key, Text value, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
+    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         
         // Returns  String[0] = <title>[TITLE]</title>
         //          String[1] = <text>[CONTENT]</text>
@@ -45,7 +41,7 @@ public class WikiPageLinksMapper extends MapReduceBase implements Mapper<LongWri
                 continue;
             
             // add valid otherPages to the map.
-            output.collect(page, new Text(otherPage));
+            context.write(page, new Text(otherPage));
         }
     }
     

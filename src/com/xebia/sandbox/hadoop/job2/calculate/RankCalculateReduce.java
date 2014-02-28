@@ -1,19 +1,16 @@
 package com.xebia.sandbox.hadoop.job2.calculate;
 
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.MapReduceBase;
-import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.Reducer;
-import org.apache.hadoop.mapred.Reporter;
-
-public class RankCalculateReduce extends MapReduceBase implements Reducer<Text, Text, Text, Text> {
+public class RankCalculateReduce extends Reducer<Text, Text, Text, Text> {
 
     private static final float damping = 0.85F;
     
-    public void reduce(Text page, Iterator<Text> values, OutputCollector<Text, Text> out, Reporter reporter) throws IOException {
+    public void reduce(Text page, Iterator<Text> values, Context context) throws IOException, InterruptedException {
         boolean isExistingWikiPage = false;
         String[] split;
         float sumShareOtherPageRanks = 0;
@@ -48,6 +45,6 @@ public class RankCalculateReduce extends MapReduceBase implements Reducer<Text, 
         if(!isExistingWikiPage) return;
         float newRank = damping * sumShareOtherPageRanks + (1-damping);
 
-        out.collect(page, new Text(newRank + links));
+        context.write(page, new Text(newRank + links));
     }
 }

@@ -6,22 +6,19 @@ import java.nio.charset.CharacterCodingException;
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.MapReduceBase;
-import org.apache.hadoop.mapred.Mapper;
-import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.mapreduce.Mapper;
 
-public class RankingMapper extends MapReduceBase implements Mapper<LongWritable, Text, FloatWritable, Text> {
+public class RankingMapper extends Mapper<LongWritable, Text, FloatWritable, Text> {
     
-    public void map(LongWritable key, Text value, OutputCollector<FloatWritable, Text> output, Reporter arg3) throws IOException {
+    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         String[] pageAndRank = getPageAndRank(key, value);
         
         float parseFloat = Float.parseFloat(pageAndRank[1]);
         
         Text page = new Text(pageAndRank[0]);
         FloatWritable rank = new FloatWritable(parseFloat);
-        
-        output.collect(rank, page);
+
+        context.write(rank, page);
     }
     
     private String[] getPageAndRank(LongWritable key, Text value) throws CharacterCodingException {
